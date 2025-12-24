@@ -1,43 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>User Login</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Only Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #eef2f3;
-}
-.box {
-  width: 320px;
-  margin: 120px auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0,0,0,.1);
-}
-input, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-}
-button {
-  background: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-button:hover {
-  background: #0056b3;
-}
-#msg {
-  margin-top: 15px;
-  text-align: center;
-  font-weight: bold;
-}
-</style>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f2f2f2;
+    }
+    .box {
+      width: 300px;
+      margin: 120px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0,0,0,.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    button {
+      background: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #msg {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
@@ -45,64 +41,45 @@ button:hover {
 <div class="box">
   <h2>Login</h2>
 
-  <input type="email" id="email" placeholder="Email" required>
-  <input type="password" id="password" placeholder="Password" required>
+  <input type="text" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
 
-  <button id="btn">Login</button>
+  <button onclick="login()">Login</button>
 
   <div id="msg"></div>
 </div>
 
 <script>
-const API_URL =
-"https://script.google.com/macros/s/AKfycbyFAPzA0CoCfacEzpGDyG3uKaKoOaeLTrkof5NMbV_aIzd2xHjPRbAJ7SyI9Ch6-ZOADQ/exec";
-
-document.getElementById("btn").addEventListener("click", login);
+/* 🔐 FAKE USER DATABASE (HTML ONLY) */
+const users = [
+  { email: "admin@gmail.com", password: "12345", name: "Admin" },
+  { email: "user@gmail.com", password: "67890", name: "User" }
+];
 
 function login() {
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
 
-  document.getElementById("msg").innerText = "Please wait...";
+  let found = false;
 
-  fetch(API_URL, {
-    method: "POST",
-    redirect: "follow",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      email: document.getElementById("email").value.trim(),
-      password: document.getElementById("password").value.trim()
-    })
-  })
-  .then(response => response.text())   // 🔑 TEXT first
-  .then(text => {
-    console.log("RAW RESPONSE:", text);
-
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      throw "Invalid JSON from server";
-    }
-
-    if (data.status === "success") {
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].email === email && users[i].password === pass) {
+      found = true;
       document.getElementById("msg").style.color = "green";
       document.getElementById("msg").innerText =
-        "Welcome " + data.name;
-    } else {
-      document.getElementById("msg").style.color = "red";
-      document.getElementById("msg").innerText =
-        data.message || "Login failed";
+        "Welcome " + users[i].name;
+      break;
     }
-  })
-  .catch(err => {
-    console.error(err);
+  }
+
+  if (!found) {
     document.getElementById("msg").style.color = "red";
     document.getElementById("msg").innerText =
-      "Connection blocked. Use Live Server.";
-  });
+      "Invalid login";
+  }
 }
 </script>
 
 </body>
 </html>
+
