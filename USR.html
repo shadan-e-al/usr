@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>User Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #eef2f3;
+}
+.box {
+  width: 320px;
+  margin: 120px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0,0,0,.1);
+}
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background: #0056b3;
+}
+#msg {
+  margin-top: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Login</h2>
+
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="password" id="password" placeholder="Password" required>
+
+  <button id="btn">Login</button>
+
+  <div id="msg"></div>
+</div>
+
+<script>
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyFAPzA0CoCfacEzpGDyG3uKaKoOaeLTrkof5NMbV_aIzd2xHjPRbAJ7SyI9Ch6-ZOADQ/exec";
+
+document.getElementById("btn").addEventListener("click", login);
+
+function login() {
+
+  document.getElementById("msg").innerText = "Please wait...";
+
+  fetch(API_URL, {
+    method: "POST",
+    redirect: "follow",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      email: document.getElementById("email").value.trim(),
+      password: document.getElementById("password").value.trim()
+    })
+  })
+  .then(response => response.text())   // 🔑 TEXT first
+  .then(text => {
+    console.log("RAW RESPONSE:", text);
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw "Invalid JSON from server";
+    }
+
+    if (data.status === "success") {
+      document.getElementById("msg").style.color = "green";
+      document.getElementById("msg").innerText =
+        "Welcome " + data.name;
+    } else {
+      document.getElementById("msg").style.color = "red";
+      document.getElementById("msg").innerText =
+        data.message || "Login failed";
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById("msg").style.color = "red";
+    document.getElementById("msg").innerText =
+      "Connection blocked. Use Live Server.";
+  });
+}
+</script>
+
+</body>
+</html>
